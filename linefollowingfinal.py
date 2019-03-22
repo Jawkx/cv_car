@@ -151,11 +151,11 @@ def countSendShift(contours):
 for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=True):
 
 	img = rawCapture.array
-	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	blurred = cv2.GaussianBlur(img, (9, 9), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
 	if ( action == 0 ): #linefollowing
+		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+		blurred = cv2.GaussianBlur(img, (9, 9), 0)
+		hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 		maskedred = cv2.inRange(hsv, lower_red, upper_red)
 		maskedblack = cv2.inRange(hsv, lower_black , upper_black )
 		maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
