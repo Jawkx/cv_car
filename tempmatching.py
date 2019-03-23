@@ -41,7 +41,7 @@ thresholdValue = [ 0.7, 0.7 , 0.7 ]
 img = cv.imread('temptest.jpg',0)
 img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
 
-for i in range ( len(match_for_name) ):
+while i < len(match_for_name) :
 
 	matching_name = match_for_name[i]
 
@@ -62,7 +62,9 @@ for i in range ( len(match_for_name) ):
 
 	if ( matched != 0 ):
 		print(matchingname)
-		break
+		return matchingname
 	else :
-		i = 0
+		i += 1
+
+return "nothing"
 		
