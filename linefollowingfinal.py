@@ -1,9 +1,3 @@
-#NOTES
-# WRITE NUM 1-STOP , 2-TURN_LEFT , 3-TURN RIGHT , 4-CANT FIND SHIT , 5-ROTATE 
-# ACTION 0=FOLLOW LINE, 1=TEMPLATE MATCHING 
-#
-#
-
 ##IMPORT LIBRARY
 import picamera
 import picamera.array
