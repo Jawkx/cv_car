@@ -21,7 +21,13 @@ import time
 ##SETTING FOR SERVO CONTROL
 GPIO.setmode(GPIO.BCM)
 servoPin = 17
+trigger = 18 #tbd
+echo = 24  #tbd
+
+
 GPIO.setup(servoPin, GPIO.OUT)
+GPIO.setup(trigger,GPIO.OUT)
+GPIO.setup(echo,GPIO.IN)
 p = GPIO.PWM(servoPin, 50) # GPIO 17 for PWM with 50Hz
 p.start(2.3) # Initialization
 
@@ -91,12 +97,35 @@ camera.framerate = 60
 rawCapture = picamera.array.PiRGBArray(camera)
 sendstatus = input('Sendstatus 1-true 0-false:')
 followblack = input('follow black 1-true 0 false :')
+stop_distance = input('stop distance (cm):')
+
 time.sleep(0.1)
 
+def calculatedistance():
 
-def writeNumber(value):
+    GPIO.output(trigger, True)
+ 
+    time.sleep(0.00001)
+    GPIO.output(trigger, False)
+ 
+    StartTime = time.time()
+    StopTime = time.time()
+ 
+    while GPIO.input(echo) == 0:
+        StartTime = time.time()
+ 
+    while GPIO.input(echo) == 1:
+        StopTime = time.time()
+ 
+    TimeElapsed = StopTime - StartTime
+    distance = (TimeElapsed * 34300) / 2
+ 
+    return distance
+
+def sendInt(value):
 		if ( sendstatus != 0 ):
 			bus.write_byte(address, value)
+
     	return -1
 
 def midpointCalc(target):
@@ -120,6 +149,7 @@ def midpointCalc(target):
 	elif( l2 > l1 ):
 		absMidx = (x3+x4)/2
 		absMidy = (y3+y4)/2
+
 		return [x3,y3,x4,y4,absMidx,absMidy]
 
 def countSendShift(contours):
@@ -178,7 +208,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			
 			if noblack == 1 :
 				limitframe += 1
-			writeNumber( countSendShift(yellowcontours) )
+			sendInt( countSendShift(yellowcontours) )
 		elif ( len( greencontours )!= 0 ):
 		
 			if ( lastcolorblack == 1 ):
@@ -190,7 +220,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			if noblack == 1 :
 				limitframe += 1
 
-			writeNumber( countSendShift(greencontours) )
+			sendInt( countSendShift(greencontours) )
 		elif ( len(redcontours) != 0 ):
 		
 			if ( lastcolorblack == 1 ):
@@ -203,7 +233,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			if noblack == 1:
 				limitframe += 1
 				
-			writeNumber( countSendShift(redcontours) )		
+			sendInt( countSendShift(redcontours) )		
 		elif( len(blackcontours) != 0 and noblack!=1 ):
 		
 			if ( freeblack == 1 ):
@@ -211,9 +241,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			else:
 				lastcolorblack = 1
 			
-			writeNumber( countSendShift(blackcontours) )	
+			sendInt( countSendShift(blackcontours) )	
 		else :
-				writeNumber(4)
+				sendInt(4)
 
 
 		if ( limitframe >= limitdelay ):
@@ -226,8 +256,17 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		writeNumber(1) #stop the car
-		p.ChangeDutyCycle(5.7) 
+		sendInt(1) #stop the car
+		time.sleep(0.5)
+		distance = 1000
+		while ( distance < stop_distance ):
+			sendInt(5)
+			distance = calculatedistance()
+
+		p.ChangeDutyCycle(5.7)
+		sendInt(1)
+		time.sleep(0.5)
+		action = 2
 	elif (action == 2): #TemplateMatching
 	
 
@@ -238,6 +277,6 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	rawCapture.truncate(0)
 
 	if key==ord('q'):
-		writeNumber(0)
+		sendInt(0)
 		GPIO.cleanup();
 		break
