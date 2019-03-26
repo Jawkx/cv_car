@@ -56,7 +56,7 @@ ttfl0 =  cv2.imread('template/t_tfl/0.jpg',0)
 ttfl1 =  cv2.imread('template/t_tfl/1.jpg',0)
 ttfl2 =  cv2.imread('template/t_tfl/2.jpg',0)
 
-angle_name = [ tangle0 , tangle1 , tangle2 , 'readangle']
+angle_name = [ tangle0 , tangle1 , tangle2 , 'deadangle']
 colorblue_name = [ tcolorblue0 , tcolorblue1 , tcolorblue2 , 'follow blue']
 colorgreen_name = [ tcolorgreen0 , tcolorgreen1 , tcolorgreen2 , 'follow green']
 coloryellow_name = [ tcoloryellow0 , tcoloryellow1 , tcoloryellow2 , 'follow yellow']
@@ -66,10 +66,10 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance']
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
-thresholdValue = [ 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 ]
+thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.8 , 0.8 , 0.8 , 0.8 ]
 
 def readtemplate(target):
-
+	matched = 0
 	img = cv2.imread(target)
 	img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
 
@@ -78,22 +78,22 @@ def readtemplate(target):
 		
 		for j in range ( 0, 3 ):
 			current_template = match_for_name[i][j]
+			print(match_for_name[i][3])
 			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
 			loc = np.where( res >= thresholdValue[i])
 
 			if len( zip(*loc[::-1]) ) >= 3 :
 				matched = 1
 		
-			for pt in zip(*loc[::-1]):
-			   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
+			#for pt in zip(*loc[::-1]):
+			#   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
 
 		
 		if ( matched != 0 ):
-			return current_template[i][3]
-		else :
-			i += 1
+			return match_for_name[i][3]
 
-		return "no match"
+
+	return "no match"
 
 print(readtemplate('temptest.jpg'))
 
