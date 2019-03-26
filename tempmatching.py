@@ -67,28 +67,29 @@ tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
 thresholdValue = [ 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7]
-img = cv.imread('temptest.jpg',0)
+img = cv2.imread('temptest.jpg')
 img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
 
 while i < len(match_for_name) :
 
 
-	for j in range ( 3 ):
+	for j in range ( 2 ):
 		current_template = match_for_name[i][j]
 		res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
-		loc = np.where( res >= thresholdValue[j])
+		loc = np.where( res >= thresholdValue[i])
 
 		if len( zip(*loc[::-1]) ) >= 3 :
 			matched = 1
 	
 		for pt in zip(*loc[::-1]):
-		   cv2.circle(img_rgb, pt, 5 ,array_draw_color[i] , -1 )
+		   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
 
 	
 	j = 0
 
 	if ( matched != 0 ):
-		print(current_template[i][5])
+		print("test")
+		#print(current_template[i][3])
 	else :
 		i += 1
 
