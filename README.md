@@ -1,4 +1,4 @@
-# advance_cv_car
+# Computer vision car
 
 ## What integer that are written to arduino do :
 - 1 - stop
