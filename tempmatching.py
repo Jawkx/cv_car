@@ -68,6 +68,8 @@ tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
 thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.8 , 0.8 , 0.8 , 0.8 ]
 
+picture_to_read = input("Enter link for the picture to read:")
+
 def readtemplate(target):
 	matched = 0
 	img = cv2.imread(target)
@@ -95,7 +97,7 @@ def readtemplate(target):
 
 	return "no match"
 
-print(readtemplate('temptest.jpg'))
+print(readtemplate(picture_to_read))
 
 
 
