@@ -72,10 +72,9 @@ img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
 
 while i < len(match_for_name) :
 
-	matching_name = match_for_name[i]
 
-	for j in range ( len ( matching_name ) ):
-		current_template = matching_name[j]
+	for j in range ( 3 ):
+		current_template = match_for_name[i][j]
 		res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
 		loc = np.where( res >= thresholdValue[j])
 
@@ -89,10 +88,9 @@ while i < len(match_for_name) :
 	j = 0
 
 	if ( matched != 0 ):
-		print(matchingname)
-		return matchingname
+		print(current_template[i][5])
 	else :
 		i += 1
 
-return "nothing"
+
 		
