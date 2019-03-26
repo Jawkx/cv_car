@@ -66,32 +66,37 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance']
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
-thresholdValue = [ 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7]
-img = cv2.imread('temptest.jpg')
-img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
+thresholdValue = [ 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 , 0.7 ]
 
-while i < len(match_for_name) :
+def readtemplate(target):
+
+	img = cv2.imread(target)
+	img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
+
+	for i in range ( 0 , 8 ) :
+
+		for j in range ( 0, 3 ):
+			current_template = match_for_name[i][j]
+			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
+			loc = np.where( res >= thresholdValue[i])
+
+			if len( zip(*loc[::-1]) ) >= 3 :
+				matched = 1
+		
+			for pt in zip(*loc[::-1]):
+			   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
+
+		
+		j = 0
+
+		if ( matched != 0 ):
+			return current_template[i][3]
+		else :
+			i += 1
+
+		return "no match"
 
 
-	for j in range ( 2 ):
-		current_template = match_for_name[i][j]
-		res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
-		loc = np.where( res >= thresholdValue[i])
-
-		if len( zip(*loc[::-1]) ) >= 3 :
-			matched = 1
-	
-		for pt in zip(*loc[::-1]):
-		   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
-
-	
-	j = 0
-
-	if ( matched != 0 ):
-		print("test")
-		#print(current_template[i][3])
-	else :
-		i += 1
 
 
 		
