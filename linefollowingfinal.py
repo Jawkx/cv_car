@@ -27,7 +27,7 @@ p.start(2.3) # Initialization
 
 ##SETTING FOR I2C
 bus = smbus.SMBus(1)
-address = 0x04
+car_address = 0x04
 
 ##GENERAL VARIABLE
 action = 0
@@ -116,7 +116,7 @@ def calculatedistance():
  
     return distance
 
-def sendInt(value):
+def sendInt(value,address):
 		if ( sendstatus != 0 ):
 			bus.write_byte(address, value)
 
@@ -202,7 +202,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			
 			if noblack == 1 :
 				limitframe += 1
-			sendInt( countSendShift(yellowcontours) )
+			sendInt( countSendShift(yellowcontours) , car_address )
 		elif ( len( greencontours )!= 0 ):
 		
 			if ( lastcolorblack == 1 ):
@@ -214,7 +214,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			if noblack == 1 :
 				limitframe += 1
 
-			sendInt( countSendShift(greencontours) )
+			sendInt( countSendShift(greencontours) , car_address )
 		elif ( len(redcontours) != 0 ):
 		
 			if ( lastcolorblack == 1 ):
@@ -227,7 +227,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			if noblack == 1:
 				limitframe += 1
 				
-			sendInt( countSendShift(redcontours) )		
+			sendInt( countSendShift(redcontours) , car_address )		
 		elif( len(blackcontours) != 0 and noblack!=1 ):
 		
 			if ( freeblack == 1 ):
@@ -235,7 +235,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			else:
 				lastcolorblack = 1
 			
-			sendInt( countSendShift(blackcontours) )	
+			sendInt( countSendShift(blackcontours) , car_address )	
 		else :
 				sendInt(4)
 
@@ -254,11 +254,11 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		time.sleep(0.5)
 		distance = 1000
 		while ( distance < stop_distance ):
-			sendInt(5)
+			sendInt(5 , car_address )
 			distance = calculatedistance()
 
 		p.ChangeDutyCycle(5.7)
-		sendInt(1)
+		sendInt(1 , car_address )
 		time.sleep(0.5)
 		action = 2
 	elif (action == 2): #TemplateMatching
