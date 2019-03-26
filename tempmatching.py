@@ -75,6 +75,7 @@ def readtemplate(target):
 
 	for i in range ( 0 , 8 ) :
 
+		
 		for j in range ( 0, 3 ):
 			current_template = match_for_name[i][j]
 			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
@@ -87,8 +88,6 @@ def readtemplate(target):
 			   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
 
 		
-		j = 0
-
 		if ( matched != 0 ):
 			return current_template[i][3]
 		else :
@@ -96,6 +95,7 @@ def readtemplate(target):
 
 		return "no match"
 
+print(readtemplate('temptest.jpg'))
 
 
 
