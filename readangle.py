@@ -38,33 +38,35 @@ address = 0x68       # via i2cdetect
  
 # Aktivieren, um das Modul ansprechen zu koennen
 bus.write_byte_data(address, power_mgmt_1, 0)
- 
-print "gyroscope"
-print "--------"
- 
-gyroscope_xout = read_word_2c(0x43)
-gyroscope_yout = read_word_2c(0x45)
-gyroscope_zout = read_word_2c(0x47)
- 
-print "gyroscope_xout: ", ("%5d" % gyroscope_xout), " skaliert: ", (gyroscope_xout / 131)
-print "gyroscope_yout: ", ("%5d" % gyroscope_yout), " skaliert: ", (gyroscope_yout / 131)
-print "gyroscope_zout: ", ("%5d" % gyroscope_zout), " skaliert: ", (gyroscope_zout / 131)
- 
-print
-print "accelerationssensor"
-print "---------------------"
- 
-acceleration_xout = read_word_2c(0x3b)
-acceleration_yout = read_word_2c(0x3d)
-acceleration_zout = read_word_2c(0x3f)
- 
-acceleration_xout_skaliert = acceleration_xout / 16384.0
-acceleration_yout_skaliert = acceleration_yout / 16384.0
-acceleration_zout_skaliert = acceleration_zout / 16384.0
- 
-print "acceleration_xout: ", ("%6d" % acceleration_xout), " skaliert: ", acceleration_xout_skaliert
-print "acceleration_yout: ", ("%6d" % acceleration_yout), " skaliert: ", acceleration_yout_skaliert
-print "acceleration_zout: ", ("%6d" % acceleration_zout), " skaliert: ", acceleration_zout_skaliert
- 
-print "X Rotation: " , get_x_rotation(acceleration_xout_skaliert, acceleration_yout_skaliert, acceleration_zout_skaliert)
-print "Y Rotation: " , get_y_rotation(acceleration_xout_skaliert, acceleration_yout_skaliert, acceleration_zout_skaliert)
+
+while True :
+    print "gyroscope"
+    print "--------"
+     
+    gyroscope_xout = read_word_2c(0x43)
+    gyroscope_yout = read_word_2c(0x45)
+    gyroscope_zout = read_word_2c(0x47)
+     
+    print "gyroscope_xout: ", ("%5d" % gyroscope_xout), " scaled: ", (gyroscope_xout / 131)
+    print "gyroscope_yout: ", ("%5d" % gyroscope_yout), " scaled: ", (gyroscope_yout / 131)
+    print "gyroscope_zout: ", ("%5d" % gyroscope_zout), " scaled: ", (gyroscope_zout / 131)
+     
+    print
+    print "accelerationssensor"
+    print "---------------------"
+     
+    acceleration_xout = read_word_2c(0x3b)
+    acceleration_yout = read_word_2c(0x3d)
+    acceleration_zout = read_word_2c(0x3f)
+     
+    acceleration_xout_scaled = acceleration_xout / 16384.0
+    acceleration_yout_scaled = acceleration_yout / 16384.0
+    acceleration_zout_scaled = acceleration_zout / 16384.0
+     
+    print "acceleration_xout: ", ("%6d" % acceleration_xout), " scaled: ", acceleration_xout_scaled
+    print "acceleration_yout: ", ("%6d" % acceleration_yout), " scaled: ", acceleration_yout_scaled
+    print "acceleration_zout: ", ("%6d" % acceleration_zout), " scaled: ", acceleration_zout_scaled
+     
+    print "X Rotation: " , get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)
+    print "Y Rotation: " , get_y_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)
+    print "---------------------"
