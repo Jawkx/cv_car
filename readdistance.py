@@ -35,7 +35,7 @@ def calculatedistance():
 
 try:
     while True :
-        print('distance',calculatedistance())
+        print "distance (cm):", round(calculatedistance())
         time.sleep(0.01)
 except KeyboardInterupt :
 	pass
