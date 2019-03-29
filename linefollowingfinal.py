@@ -9,11 +9,11 @@ import smbus
 import math
 import RPi.GPIO as GPIO
 
-##SETTING FOR SERVO CONTROL
+##SETTING FOR SERVO CONTROL AND ULTRASONIC
 GPIO.setmode(GPIO.BCM)
 servoPin = 17
-trigger = 18 #tbd
-echo = 24  #tbd
+trigger = 24 #tbd
+echo = 18  #tbd
 
 
 GPIO.setup(servoPin, GPIO.OUT)

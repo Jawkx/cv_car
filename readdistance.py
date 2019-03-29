@@ -3,8 +3,8 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
-trigger = 18 #tbd
-echo = 24  #tbd
+trigger = 24 #tbd
+echo = 18  #tbd
 
 
 def calculatedistance():
