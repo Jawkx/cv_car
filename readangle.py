@@ -40,13 +40,14 @@ address = 0x68       # via i2cdetect
 # Aktivieren, um das Modul ansprechen zu koennen
 bus.write_byte_data(address, power_mgmt_1, 0)
 
-while True :
+try:
+    while True :
     #print "gyroscope"
     #print "--------"
      
-    gyroscope_xout = read_word_2c(0x43)
-    gyroscope_yout = read_word_2c(0x45)
-    gyroscope_zout = read_word_2c(0x47)
+        gyroscope_xout = read_word_2c(0x43)
+        gyroscope_yout = read_word_2c(0x45)
+        gyroscope_zout = read_word_2c(0x47)
      
     #print "gyroscope_xout: ", ("%5d" % gyroscope_xout), " scaled: ", (gyroscope_xout / 131)
     #print "gyroscope_yout: ", ("%5d" % gyroscope_yout), " scaled: ", (gyroscope_yout / 131)
@@ -56,20 +57,22 @@ while True :
     #print "accelerationssensor"
     #print "---------------------"
      
-    acceleration_xout = read_word_2c(0x3b)
-    acceleration_yout = read_word_2c(0x3d)
-    acceleration_zout = read_word_2c(0x3f)
+        acceleration_xout = read_word_2c(0x3b)
+        acceleration_yout = read_word_2c(0x3d)
+        acceleration_zout = read_word_2c(0x3f)
      
-    acceleration_xout_scaled = acceleration_xout / 16384.0
-    acceleration_yout_scaled = acceleration_yout / 16384.0
-    acceleration_zout_scaled = acceleration_zout / 16384.0
+        acceleration_xout_scaled = acceleration_xout / 16384.0
+        acceleration_yout_scaled = acceleration_yout / 16384.0
+        acceleration_zout_scaled = acceleration_zout / 16384.0
      
     #print "acceleration_xout: ", ("%6d" % acceleration_xout), " scaled: ", acceleration_xout_scaled
     #print "acceleration_yout: ", ("%6d" % acceleration_yout), " scaled: ", acceleration_yout_scaled
     #print "acceleration_zout: ", ("%6d" % acceleration_zout), " scaled: ", acceleration_zout_scaled
      
-    print "X Rotation: " , get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)
+        print "X Rotation: " , get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)
     #print "Y Rotation: " , get_y_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)
-    print "---------------------"
+        print "---------------------"
 
-    time.sleep(0.1)
+        time.sleep(0.1)
+except KeyboarInterrupt:
+    pass

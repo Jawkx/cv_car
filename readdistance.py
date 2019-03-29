@@ -33,7 +33,10 @@ def calculatedistance():
  
     return distance
 
+try:
+    while True :
+        print('distance',calculatedistance())
+        time.sleep(0.01)
+except KeyboardInterupt :
+	pass
 
-while True :
-    print('distance',calculatedistance())
-    time.sleep(0.01)
