@@ -27,7 +27,7 @@ def calculatedistance():
         StopTime = time.time()
  
     TimeElapsed = StopTime - StartTime
-    distance = (TimeElapsed * 34300) / 2
+    distance = TimeElapsed/0.000058 
  
     return distance
 
