@@ -1,15 +1,17 @@
+import cv2
 import time
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
 
-trigger = 24 #tbd
-echo = 18  #tbd
+trigger = 21 #tbd
+echo = 20  #tbd
 
 GPIO.setup(trigger,GPIO.OUT)
 GPIO.setup(echo,GPIO.IN)
 
+#GPIO.cleanup()
 def calculatedistance():
 
     GPIO.output(trigger, True)
@@ -31,6 +33,7 @@ def calculatedistance():
  
     return distance
 
+
 while True :
-    print(calculatedistance())
-    time.sleep(0.1)
+    print('distance',calculatedistance())
+    time.sleep(0.01)
