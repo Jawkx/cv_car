@@ -19,7 +19,7 @@ GPIO.setup(servoPin, GPIO.OUT)
 GPIO.setup(trigger,GPIO.OUT)
 GPIO.setup(echo,GPIO.IN)
 p = GPIO.PWM(servoPin, 50) # GPIO 17 for PWM with 50Hz
-p.start(2.3) # Initialization
+p.start(3.0) # Initialization
 
 ##SETTING FOR I2C
 bus = smbus.SMBus(1)
@@ -134,8 +134,8 @@ def calculatedistance():
     return distance
 
 def sendInt(value,address):
-		if ( sendstatus != 0 ):
-			bus.write_byte(address, value)
+	if ( sendstatus != 0 ):
+		bus.write_byte(address, value)
 
     	return -1
 
@@ -255,9 +255,7 @@ def get_angle():
 '''
 ----------------------------------------------------------------
 ================================================================
-█▀▀ ▀▀█▀▀ █▀▀█ █▀▀█ ▀▀█▀▀   █▀▀█ █▀▀█ █▀▀█ █▀▀▀ █▀▀█ █▀▀█ █▀▄▀█
-▀▀█   █   █▄▄█ █▄▄▀   █     █  █ █▄▄▀ █  █ █ ▀█ █▄▄▀ █▄▄█ █ ▀ █
-▀▀▀   ▀   ▀  ▀ ▀ ▀▀   ▀     █▀▀▀ ▀ ▀▀ ▀▀▀▀ ▀▀▀▀ ▀ ▀▀ ▀  ▀ ▀   ▀
+start program
 ================================================================
 ----------------------------------------------------------------
 '''
@@ -337,7 +335,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			
 			sendInt( countSendShift(blackcontours) , car_address )	
 		else :
-				sendInt(4)
+				sendInt(4 , car_address)
 
 
 		if ( limitframe >= limitdelay ):
@@ -350,7 +348,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		sendInt(1) #stop the car
+		sendInt(1 , car_address ) #stop the car
 		time.sleep(0.5)
 		distance = 1000
 		while ( distance < stop_distance ):
@@ -361,7 +359,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		sendInt(1 , car_address )
 		time.sleep(0.5)
 		action = 2
-	elif (action == 2): #TemplateMatching
+	#elif (action == 2): #TemplateMatching
 	
 
 	cv2.imshow("color", img)
@@ -371,6 +369,6 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	rawCapture.truncate(0)
 
 	if key==ord('q'):
-		sendInt(0)
+		sendInt( 0 , car_address )
 		GPIO.cleanup();
 		break
