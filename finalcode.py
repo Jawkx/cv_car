@@ -205,10 +205,6 @@ def readtemplate(target):
 			if len( zip(*loc[::-1]) ) >= 3 :
 				matched = 1
 		
-			#for pt in zip(*loc[::-1]):
-			#   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
-
-		
 		if ( matched != 0 ):
 			return match_for_name[i][3]
 
