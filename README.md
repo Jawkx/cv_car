@@ -11,3 +11,8 @@
 - 0 - line following
 - 1 - block finding
 - 2 - template matching
+- 3 - read angle 
+- 4 - count shape
+- 5 - kick goal
+- 6 - read distance
+- 7 - traffic light

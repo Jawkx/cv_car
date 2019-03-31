@@ -75,15 +75,15 @@ ttfl0 =  cv2.imread('template/t_tfl/0.jpg',0)
 ttfl1 =  cv2.imread('template/t_tfl/1.jpg',0)
 ttfl2 =  cv2.imread('template/t_tfl/2.jpg',0)
 
-angle_name = [ tangle0 , tangle1 , tangle2 , 'readangle']
-colorblue_name = [ tcolorblue0 , tcolorblue1 , tcolorblue2 , 'follow blue']
-colorgreen_name = [ tcolorgreen0 , tcolorgreen1 , tcolorgreen2 , 'follow green']
-colorred_name = [tcolorred0 , tcolorred1 , tcolorred2 , 'followred']
-coloryellow_name = [ tcoloryellow0 , tcoloryellow1 , tcoloryellow2 , 'follow yellow']
-cshape_name = [ tcshape0 , tcshape1 , tcshape2 , 'countshape']
-goal_name = [ tgoalpost0 , tgoalpost1 , tgoalpost2 , 'goal']
-rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance']
-tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
+angle_name = [ tangle0 , tangle1 , tangle2 , 'readangle' , 3 ]
+colorblue_name = [ tcolorblue0 , tcolorblue1 , tcolorblue2 , 'follow blue' , 0 ]
+colorgreen_name = [ tcolorgreen0 , tcolorgreen1 , tcolorgreen2 , 'follow green' , 0 ]
+colorred_name = [tcolorred0 , tcolorred1 , tcolorred2 , 'followred' , 0 ]
+coloryellow_name = [ tcoloryellow0 , tcoloryellow1 , tcoloryellow2 , 'follow yellow' , 0]
+cshape_name = [ tcshape0 , tcshape1 , tcshape2 , 'countshape' , 4 ]
+goal_name = [ tgoalpost0 , tgoalpost1 , tgoalpost2 , 'goal' , 5 ]
+rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
+tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
 thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.7 , 0.8 , 0.9 , 0.8 , 0.9 , 0.5]
