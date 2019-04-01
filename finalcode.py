@@ -112,6 +112,10 @@ freeblack = 0
 freeblackcount = 0
 noblack = 0
 
+##VAR FOR ANGLE AND PREVIOUS ANGLE
+current_angle = 0
+highest_angle = 0
+
 def calculatedistance():
 
     GPIO.output(trigger, True)
@@ -248,6 +252,9 @@ def get_angle():
     acceleration_zout_scaled = acceleration_zout / 16384.0
 
     return round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
+
+def countshape():
+
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -270,7 +277,14 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 
 	img = rawCapture.array
 
-	if ( action == 0 ): #linefollowing
+
+	if ( action == 0 or action == 3 ): #linefollowing ang also readangle
+
+		if ( action == 3 ):
+			current_angle = get_angle()
+			if current_angle > highest_angle :
+				highest_angle = current_angle
+
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(img, (9, 9), 0)
 		hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
@@ -355,8 +369,13 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		sendInt(1 , car_address )
 		time.sleep(0.5)
 		action = 2
-	#elif (action == 2): #TemplateMatching
-	
+	elif (action == 2): #TemplateMatching
+		action = readtemplate(img)
+	elif ( action == 4 ):
+		countshape(img)
+	elif ( action == 5 ):
+		
+
 
 	cv2.imshow("color", img)
 		
