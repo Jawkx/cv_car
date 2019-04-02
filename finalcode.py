@@ -254,7 +254,9 @@ def get_angle():
     return round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
 
 def countshape():
+	print(countshape)
 
+def 
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -371,6 +373,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		action = 2
 	elif (action == 2): #TemplateMatching
 		action = readtemplate(img)
+		time.sleep(1)
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
