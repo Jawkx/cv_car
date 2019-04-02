@@ -13,9 +13,7 @@ import math
 
 i = 0
 j = 0
-
 matching_name = "none"
-matched = 0
 
 array_draw_color = [ (255,0,0) , (0,255,0) , (0,0,255) , (0,255,255)]
 
@@ -68,36 +66,43 @@ tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
 thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.7 , 0.8 , 0.9 , 0.8 , 0.9 , 0.5]
 
-picture_to_read = input("Enter link for the picture to read:")
-
 def readtemplate(target):
 	matched = 0
-	img = cv2.imread(target)
-	img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
-
 	for i in range ( 0 , 8 ) :
 
 		print("i=" , i)	
 		for j in range ( 0, 3 ):
 			print("j=",j)
 			current_template = match_for_name[i][j]
-			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
+			res = cv2.matchTemplate(target, current_template,cv2.TM_CCOEFF_NORMED)
 			loc = np.where( res >= thresholdValue[i])
 
 			if len( zip(*loc[::-1]) ) >= 3 :
 				matched = 1
 		
-			for pt in zip(*loc[::-1]):
-			   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
+			#for pt in zip(*loc[::-1]):
+			#   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
                 
-		cv2.imshow('yo',img)
 		if ( matched != 0 ):
 			return match_for_name[i][3]
 
 
 	return "no match"
 
-print(readtemplate(picture_to_read))
+img = cv2.imread('temptest/test0.jpg',0)
+blurred = cv2.GaussianBlur(img, (9, 9), 0)
+ret,thresh = cv2.threshold(blurred,40,255,cv2.THRESH_BINARY_INV)
+contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+c = max(contours, key = cv2.contourArea)
+x,y,w,h = cv2.boundingRect(c)
+
+cropped = img[ y:y+h , x:x+w ]
+cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+
+resized = cv2.resize( cropped, (560,256) , interpolation = cv2.INTER_AREA)
+
+print(readtemplate(img))
 
 
 
