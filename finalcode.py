@@ -29,7 +29,6 @@ power_mgmt_2 = 0x6c
 address = 0x68  
 
 ##GENERAL VARIABLE
-action = 0
 
 ##VARIABLE FOR TEMPLATE RECOGNITION
 i = 0
@@ -254,9 +253,8 @@ def get_angle():
     return round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
 
 def countshape():
-	print(countshape)
-
-def 
+	print("countshape")
+ 
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -269,6 +267,7 @@ camera = picamera.PiCamera()
 camera.resolution = (560,256)
 camera.framerate = 60
 rawCapture = picamera.array.PiRGBArray(camera)
+action = input('start at action:')
 sendstatus = input('Sendstatus 1-true 0-false:')
 followblack = input('follow black 1-true 0 false :')
 stop_distance = input('stop distance (cm):')

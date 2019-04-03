@@ -1,15 +1,9 @@
 #code only for template matching
-#import picamera
-#import picamera.array
 import time
 import cv2
-#import cv2.cv as cv
 import numpy as np
-#import smbus
-#import time
 import math
-#import RPi.GPIO as GPIO
-#import time
+
 
 i = 0
 j = 0
@@ -63,8 +57,8 @@ goal_name = [ tgoalpost0 , tgoalpost1 , tgoalpost2 , 'goal']
 rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance']
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 
-match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
-thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.7 , 0.8 , 0.9 , 0.8 , 0.9 , 0.5]
+match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name ,tlf_name ,rdd_name ]
+thresholdValue = [ 0.8 , 0.6 , 0.6 , 0.6 , 0.6 , 0.9 , 0.8 , 0.9 , 0.6]
 
 def readtemplate(target):
 	matched = 0
@@ -80,8 +74,8 @@ def readtemplate(target):
 			if len( zip(*loc[::-1]) ) >= 3 :
 				matched = 1
 		
-			#for pt in zip(*loc[::-1]):
-			#   cv2.circle(img, pt, 5 ,array_draw_color[i] , -1 )
+			for pt in zip(*loc[::-1]):
+			   cv2.circle(target, pt, 5 , (255,0,0) , -1 )
                 
 		if ( matched != 0 ):
 			return match_for_name[i][3]
@@ -91,19 +85,20 @@ def readtemplate(target):
 
 img = cv2.imread('temptest/test0.jpg',0)
 blurred = cv2.GaussianBlur(img, (9, 9), 0)
-ret,thresh = cv2.threshold(blurred,40,255,cv2.THRESH_BINARY_INV)
+ret,thresh = cv2.threshold(blurred,35,255,cv2.THRESH_BINARY_INV)
 contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 c = max(contours, key = cv2.contourArea)
 x,y,w,h = cv2.boundingRect(c)
 
 cropped = img[ y:y+h , x:x+w ]
+ret,cropthresh = cv2.threshold(cropped,35,255,cv2.THRESH_BINARY_INV)
+
 cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
 
 resized = cv2.resize( cropped, (560,256) , interpolation = cv2.INTER_AREA)
 
-print(readtemplate(img))
-
-
-
-		
+print(readtemplate(cropped))
+cv2.imshow("cropped",cropped)
+cv2.imshow('cropthresh',cropthresh)
+cv2.waitKey(0)
