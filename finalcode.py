@@ -255,6 +255,15 @@ def get_angle():
 def countshape():
 	print("countshape")
  
+def crop(target):
+	blurred = cv2.GaussianBlur( target , (9,9) , 0 )
+	ret,thresh = cv2.threshold(blurred,40,255,cv2.THRESH_BINARY_INV)
+	contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+	c = max(contours, key = cv2.contourArea)
+	x,y,w,h = cv2.boundingRect(c)
+
+	return target[ y:y+h , x:x+w ]
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -371,7 +380,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		time.sleep(0.5)
 		action = 2
 	elif (action == 2): #TemplateMatching
-		action = readtemplate(img)
+		action = readtemplate( crop(img) )
 		time.sleep(1)
 	elif ( action == 4 ):
 		countshape(img)
