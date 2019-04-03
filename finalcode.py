@@ -193,14 +193,11 @@ def countSendShift(contours):
 
 def readtemplate(target):
 	matched = 0
-	img = cv2.imread(target)
-	img_gray = cv2.cvtColor( img , cv2.COLOR_BGR2GRAY)
+	img_gray = cv2.cvtColor( target , cv2.COLOR_BGR2GRAY)
 
 	for i in range ( 0 , 8 ) :
 
-		print("i=" , i)	
 		for j in range ( 0, 3 ):
-			print("j=",j)
 			current_template = match_for_name[i][j]
 			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
 			loc = np.where( res >= thresholdValue[i])
@@ -209,10 +206,10 @@ def readtemplate(target):
 				matched = 1
 		
 		if ( matched != 0 ):
-			return match_for_name[i][3]
+			return match_for_name[i][4]
 
 
-	return "no match"
+	return 2
 
 def read_byte(reg):
     return bus.read_byte_data(address, reg)
@@ -377,7 +374,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		p.ChangeDutyCycle(5.7)
 		sendInt(0 , car_address )
 		print('action2')
-		#action = readtemplate( crop(img) )
+		action = readtemplate( crop(img) )
+	
 	elif ( action == 4 ):
 		countshape(img)
 	#elif ( action == 5 ):
