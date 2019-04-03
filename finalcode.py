@@ -278,7 +278,6 @@ camera.framerate = 60
 rawCapture = picamera.array.PiRGBArray(camera)
 action = input('start at action:')
 sendstatus = input('Sendstatus 1-true 0-false:')
-followblack = input('follow black 1-true 0 false :')
 stop_distance = input('stop distance (cm):')
 
 time.sleep(0.1)
@@ -368,23 +367,20 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		sendInt(1 , car_address ) #stop the car
 		time.sleep(0.5)
-		distance = 1000
-		while ( distance < stop_distance ):
-			sendInt(5 , car_address )
-			distance = calculatedistance()
-
-		p.ChangeDutyCycle(5.7)
-		sendInt(1 , car_address )
-		time.sleep(0.5)
-		action = 2
+		sendInt(5, car_address)
+		distance = calculatedistance()
+		print(distance)
+		if distance < stop_distance:
+			action = 2
 	elif (action == 2): #TemplateMatching
-		action = readtemplate( crop(img) )
-		time.sleep(1)
+		p.ChangeDutyCycle(5.7)
+		sendInt(0 , car_address )
+		print('action2')
+		#action = readtemplate( crop(img) )
 	elif ( action == 4 ):
 		countshape(img)
-	elif ( action == 5 ):
+	#elif ( action == 5 ):
 		
 
 
