@@ -417,10 +417,14 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif (action == 2): #TemplateMatching
 		time.sleep(0.5)
 		sendInt(0 , car_address )
-		timr.sleep(0.5)
+		time.sleep(0.5)
 		print('action2')
-		action = readtemplate( cv2.resize( cropped, (580,425) , interpolation = cv2.INTER_AREA) )
+		action = readtemplate(img)
 		print( action )
+		if action == 2:
+			sendInt(5,car_address)
+			time.sleep(0.2)
+			sendInt(0,car_address)
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
