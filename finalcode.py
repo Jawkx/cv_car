@@ -107,6 +107,9 @@ upper_bgreen = np.array([90,255,255])
 lower_bred = np.array([166,100,150]) 
 upper_bred = np.array([175,255,255]) 
 
+lower_purple = np.array([109,102,55])
+upper_purple = np.array([143,188,216])
+
 
 ##VAR FOR LINE FOLLOWING
 lastcolor = 0
@@ -414,6 +417,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		sendInt(0 , car_address )
 		time.sleep(1.5)
 		print('action2')
+		cropped = crop(img)
 		action = readtemplate( cv2.resize( cropped, (580,425) , interpolation = cv2.INTER_AREA) )
 	
 	elif ( action == 4 ):
