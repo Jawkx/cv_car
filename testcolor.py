@@ -19,11 +19,13 @@ rawCapture = picamera.array.PiRGBArray(camera)
 for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=True):
 
 	img = rawCapture.array
+	hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 	maskedpurple = cv2.inRange(hsv,lower_purple,upper_purple)
 
 	cv2.imshow( "purpleonly" , maskedpurple)
 
 	rawCapture.truncate(0)
+	key = cv2.waitKey(1) & 0xFF
 
 	if key==ord('q'):
 		sendInt( 0 , car_address )
