@@ -101,6 +101,12 @@ upper_yellow = np.array([30,255,255])
 lower_green = np.array([35,100,30])
 upper_green = np.array([75,255,255])
 
+lower_bgreen = np.array([60,102,135])
+upper_bgreen = np.array([90,255,255])
+
+lower_bred = np.array([166,100,150]) 
+upper_bred = np.array([175,255,255]) 
+
 
 ##VAR FOR LINE FOLLOWING
 lastcolor = 0
@@ -261,6 +267,38 @@ def crop(target):
 	x,y,w,h = cv2.boundingRect(c)
 
 	return target[ y:y+h , x:x+w ]
+
+def watchtraffic(target)
+	img = target
+
+	blurred = cv2.GaussianBlur(img, (9, 9), 0)
+	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+
+
+	maskedbgreen = cv2.inRange(hsv,lower_bgreen,upper_bgreen)
+	bgreencontours, _ = cv2.findContours(maskedbgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+	maskedbred = cv2.inRange(hsv,lower_bred,upper_bred)
+	bredcontours, _ = cv2.findContours(maskedbred,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+	if len(bgreencontours) != 0:
+	    c = max(bgreencontours, key = cv2.contourArea)
+
+	    green_area = cv2.contourArea(c) 
+	else:
+		green_area = 0
+
+	if len(bredcontours) != 0:
+	    c = max(bredcontours, key = cv2.contourArea)
+	    red_area = cv2.contourArea(c)
+	else:
+		red_area = 0
+
+	if red_area > green_area :
+		return red
+	elif green_area > red_area:
+		return green
+
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -378,8 +416,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	
 	elif ( action == 4 ):
 		countshape(img)
-	#elif ( action == 5 ):
-		
+	elif ( action == 7 ):
+		p.ChangeDutyCycle(5.7)
+		print( watchtraffic(img) )
 
 
 	cv2.imshow("color", img)
