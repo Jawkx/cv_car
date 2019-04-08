@@ -339,13 +339,15 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		maskedblack = cv2.inRange(hsv, lower_black , upper_black )
 		maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 		maskedgreen = cv2.inRange(hsv,lower_green,upper_green)
+		maskedpurple = cv2.inRange(hsv,lower_purple,upper_purple)
+
 		blackcontours, _ = cv2.findContours(maskedblack,cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		redcontours, _ = cv2.findContours(maskedred,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
 		yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
 		greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-		circles = cv2.HoughCircles(gray,cv2.cv.CV_HOUGH_GRADIENT,1.5,100)
+		purple_contours , _ = cv2.findContours(maskedpurple , cv2.RETR_TREE , cv2.CHAIN_APPROX_NONE )
 
-		if ( circles is not None ):
+		if ( len(purple_contours) != 0 ):
 			action = 1	
 		elif ( len( yellowcontours) != 0 ):
 
