@@ -374,7 +374,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		p.ChangeDutyCycle(5.7)
 		sendInt(0 , car_address )
 		print('action2')
-		action = readtemplate( crop(img) )
+		action = readtemplate( cv2.resize( cropped, (580,425) , interpolation = cv2.INTER_AREA) )
 	
 	elif ( action == 4 ):
 		countshape(img)
