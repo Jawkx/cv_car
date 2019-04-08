@@ -86,24 +86,12 @@ def readtemplate(target):
 
 camera = picamera.PiCamera()
 camera.resolution = (560,256)
-camera.framerate = 60
-rawCapture = picamera.array.PiRGBArray(camera)
-img - rawCapture
+rawcapture = picamera.array.PiRGBArray(camera)
+camera.capture(rawcapture,format='bgr')
+img = rawcapture.array
 blurred = cv2.GaussianBlur(img, (9, 9), 0)
-ret,thresh = cv2.threshold(blurred,35,255,cv2.THRESH_BINARY_INV)
-contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-
-c = max(contours, key = cv2.contourArea)
-x,y,w,h = cv2.boundingRect(c)
-
-cropped = img[ y:y+h , x:x+w ]
-ret,cropthresh = cv2.threshold(cropped,35,255,cv2.THRESH_BINARY_INV)
-
-cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-
-resized = cv2.resize( cropped, (560,256) , interpolation = cv2.INTER_AREA)
-
-print(readtemplate(cropped))
-cv2.imshow("cropped",cropped)
-cv2.imshow('cropthresh',cropthresh)
-cv2.waitKey(0)
+gray = cv2.cvtColor(blurred,cv2.COLOR_BGR2GRAY)
+print(readtemplate(gray))
+#cv2.imshow("cropped",cropped)
+#cv2.imshow('cropthresh',cropthresh)
+#cv2.waitKey(0)
