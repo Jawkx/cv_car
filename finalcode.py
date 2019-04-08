@@ -262,11 +262,11 @@ def countshape():
 	print("countshape")
  
 def crop(target):
-	blurred = cv2.GaussianBlur( target , (9,9) , 0 )
+	gray = cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
+	blurred = cv2.GaussianBlur( gray , (9,9) , 0 )
 	ret,thresh = cv2.threshold(blurred,40,255,cv2.THRESH_BINARY_INV)
 	contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-
-	c = max(contours, key = cv2.contourArea)
+	c = max(contours, key = cv2.contourArea )
 	x,y,w,h = cv2.boundingRect(c)
 
 	return target[ y:y+h , x:x+w ]
@@ -317,6 +317,7 @@ rawCapture = picamera.array.PiRGBArray(camera)
 action = input('start at action:')
 sendstatus = input('Sendstatus 1-true 0-false:')
 stop_distance = input('stop distance (cm):')
+showimg = input('showimage:')
 
 time.sleep(0.1)
 
@@ -408,6 +409,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblackcount = 0
 	elif (action == 1): #block finding
 		sendInt(5, car_address)
+		p.ChangeDutyCycle(5.7)
 		distance = calculatedistance()
 		print(distance)
 		if distance < stop_distance:
@@ -415,7 +417,6 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt(0,car_address)
 	elif (action == 2): #TemplateMatching
 		time.sleep(1)
-		p.ChangeDutyCycle(5.7)
 		sendInt(0 , car_address )
 		time.sleep(1.5)
 		print('action2')
@@ -428,8 +429,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		p.ChangeDutyCycle(5.7)
 		print( watchtraffic(img) )
 
-
-	cv2.imshow("color", img)
+	if showimg == 1 :
+		cv2.imshow("color", img)
 		
 	key = cv2.waitKey(1) & 0xFF
 
