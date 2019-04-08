@@ -268,7 +268,7 @@ def crop(target):
 
 	return target[ y:y+h , x:x+w ]
 
-def watchtraffic(target)
+def watchtraffic(target):
 	img = target
 
 	blurred = cv2.GaussianBlur(img, (9, 9), 0)
@@ -295,9 +295,9 @@ def watchtraffic(target)
 		red_area = 0
 
 	if red_area > green_area :
-		return red
+		return "red"
 	elif green_area > red_area:
-		return green
+		return "green"
 
 '''
 ----------------------------------------------------------------
