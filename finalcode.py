@@ -19,7 +19,7 @@ GPIO.setup(servoPin, GPIO.OUT)
 GPIO.setup(trigger,GPIO.OUT)
 GPIO.setup(echo,GPIO.IN)
 p = GPIO.PWM(servoPin, 50) # GPIO 17 for PWM with 50Hz
-p.start(3.0) # Initialization
+p.start(2.7) # Initialization
 
 ##SETTING FOR I2C
 bus = smbus.SMBus(1)
@@ -402,15 +402,17 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		time.sleep(0.5)
 		sendInt(5, car_address)
 		distance = calculatedistance()
 		print(distance)
 		if distance < stop_distance:
 			action = 2
+			sendInt(0,car_address)
 	elif (action == 2): #TemplateMatching
+		time.sleep(1)
 		p.ChangeDutyCycle(5.7)
 		sendInt(0 , car_address )
+		time.sleep(1.5)
 		print('action2')
 		action = readtemplate( cv2.resize( cropped, (580,425) , interpolation = cv2.INTER_AREA) )
 	
