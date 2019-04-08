@@ -1,9 +1,10 @@
-#code only for template1 - copy matching
+#code only for template - copy matching
 import time
 import cv2
 import numpy as np
 import math
-
+import picamera
+import picamera.array
 
 i = 0
 j = 0
@@ -11,41 +12,41 @@ matching_name = "none"
 
 array_draw_color = [ (255,0,0) , (0,255,0) , (0,0,255) , (0,255,255)]
 
-tangle0 = cv2.imread('template1/t_angle/0.jpg',0)
-tangle1 = cv2.imread('template1/t_angle/1.jpg',0)
-tangle2 = cv2.imread('template1/t_angle/2.jpg',0)
+tangle0 = cv2.imread('template/t_angle/0.jpg',0)
+tangle1 = cv2.imread('template/t_angle/1.jpg',0)
+tangle2 = cv2.imread('template/t_angle/2.jpg',0)
 
-tcolorblue0 = cv2.imread('template1/t_colorblue/0.jpg',0)
-tcolorblue1 = cv2.imread('template1/t_colorblue/1.jpg',0)
-tcolorblue2 = cv2.imread('template1/t_colorblue/2.jpg',0)
+tcolorblue0 = cv2.imread('template/t_colorblue/0.jpg',0)
+tcolorblue1 = cv2.imread('template/t_colorblue/1.jpg',0)
+tcolorblue2 = cv2.imread('template/t_colorblue/2.jpg',0)
 
-tcolorgreen0 = cv2.imread('template1/t_colorgreen/0.jpg',0)
-tcolorgreen1 = cv2.imread('template1/t_colorgreen/1.jpg',0)
-tcolorgreen2 = cv2.imread('template1/t_colorgreen/2.jpg',0)
+tcolorgreen0 = cv2.imread('template/t_colorgreen/0.jpg',0)
+tcolorgreen1 = cv2.imread('template/t_colorgreen/1.jpg',0)
+tcolorgreen2 = cv2.imread('template/t_colorgreen/2.jpg',0)
 
-tcolorred0 = cv2.imread('template1/t_colorred/0.jpg',0)
-tcolorred1 = cv2.imread('template1/t_colorred/1.jpg',0)
-tcolorred2 = cv2.imread('template1/t_colorred/2.jpg',0)
+tcolorred0 = cv2.imread('template/t_colorred/0.jpg',0)
+tcolorred1 = cv2.imread('template/t_colorred/1.jpg',0)
+tcolorred2 = cv2.imread('template/t_colorred/2.jpg',0)
 
-tcoloryellow0 = cv2.imread('template1/t_coloryellow/0.jpg',0)
-tcoloryellow1 = cv2.imread('template1/t_coloryellow/1.jpg',0)
-tcoloryellow2 = cv2.imread('template1/t_coloryellow/2.jpg',0)
+tcoloryellow0 = cv2.imread('template/t_coloryellow/0.jpg',0)
+tcoloryellow1 = cv2.imread('template/t_coloryellow/1.jpg',0)
+tcoloryellow2 = cv2.imread('template/t_coloryellow/2.jpg',0)
 
-tcshape0 = cv2.imread('template1/t_cshape/0.jpg',0)
-tcshape1 = cv2.imread('template1/t_cshape/1.jpg',0)
-tcshape2 = cv2.imread('template1/t_cshape/2.jpg',0)
+tcshape0 = cv2.imread('template/t_cshape/0.jpg',0)
+tcshape1 = cv2.imread('template/t_cshape/1.jpg',0)
+tcshape2 = cv2.imread('template/t_cshape/2.jpg',0)
 
-tgoalpost0 = cv2.imread('template1/t_goalpost/0.jpg',0)
-tgoalpost1 = cv2.imread('template1/t_goalpost/1.jpg',0)
-tgoalpost2 = cv2.imread('template1/t_goalpost/2.jpg',0)
+tgoalpost0 = cv2.imread('template/t_goalpost/0.jpg',0)
+tgoalpost1 = cv2.imread('template/t_goalpost/1.jpg',0)
+tgoalpost2 = cv2.imread('template/t_goalpost/2.jpg',0)
 
-trdd0 =  cv2.imread('template1/t_rdd/0.jpg',0)
-trdd1 =  cv2.imread('template1/t_rdd/1.jpg',0)
-trdd2 =  cv2.imread('template1/t_rdd/2.jpg',0)
+trdd0 =  cv2.imread('template/t_rdd/0.jpg',0)
+trdd1 =  cv2.imread('template/t_rdd/1.jpg',0)
+trdd2 =  cv2.imread('template/t_rdd/2.jpg',0)
 
-ttfl0 =  cv2.imread('template1/t_tfl/0.jpg',0)
-ttfl1 =  cv2.imread('template1/t_tfl/1.jpg',0)
-ttfl2 =  cv2.imread('template1/t_tfl/2.jpg',0)
+ttfl0 =  cv2.imread('template/t_tfl/0.jpg',0)
+ttfl1 =  cv2.imread('template/t_tfl/1.jpg',0)
+ttfl2 =  cv2.imread('template/t_tfl/2.jpg',0)
 
 angle_name = [ tangle0 , tangle1 , tangle2 , 'readangle']
 colorblue_name = [ tcolorblue0 , tcolorblue1 , tcolorblue2 , 'follow blue']
@@ -83,7 +84,11 @@ def readtemplate(target):
 
 	return "no match"
 
-img = cv2.imread('temptest/test2.jpg',0)
+camera = picamera.PiCamera()
+camera.resolution = (560,256)
+camera.framerate = 60
+rawCapture = picamera.array.PiRGBArray(camera)
+img - rawCapture
 blurred = cv2.GaussianBlur(img, (9, 9), 0)
 ret,thresh = cv2.threshold(blurred,35,255,cv2.THRESH_BINARY_INV)
 contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
