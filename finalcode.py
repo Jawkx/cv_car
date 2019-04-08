@@ -85,8 +85,7 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
-thresholdValue = [ 0.8 , 0.8 , 0.8 , 0.7 , 0.8 , 0.9 , 0.8 , 0.9 , 0.5]
-
+thresholdValue = [ 0.8 , 0.6 , 0.6 , 0.6 , 0.6 , 0.9 , 0.8 , 0.9 , 0.6]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
@@ -416,15 +415,18 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			action = 2
 			sendInt(0,car_address)
 	elif (action == 2): #TemplateMatching
-		time.sleep(1)
+		time.sleep(0.5)
 		sendInt(0 , car_address )
-		time.sleep(1.5)
+		timr.sleep(0.5)
 		print('action2')
-		cropped = crop(img)
 		action = readtemplate( cv2.resize( cropped, (580,425) , interpolation = cv2.INTER_AREA) )
-	
+		print( action )
 	elif ( action == 4 ):
 		countshape(img)
+	elif ( action == 5 ):
+		print "action 5 - goal"
+	elif ( action == 6 ):
+		print "action 6 - read distance"
 	elif ( action == 7 ):
 		p.ChangeDutyCycle(5.7)
 		print( watchtraffic(img) )
