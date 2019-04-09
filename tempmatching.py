@@ -59,7 +59,7 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance']
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light']
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name]
-thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.6 , 0.7 , 0.8 , 0.75 , 0.8 , 0.7]
+thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.6 , 0.7 , 0.8 , 0.75 , 0.8 , 0.5]
 
 def readtemplate(target):
 	matched = 0

@@ -116,6 +116,7 @@ limitframe = 0
 limitdelay = 10
 limitdetectpurple = 0
 limitdetectpurpleframe = 0
+limitdetectpurpleframeval = 20
 lastcolorblack = 1
 freeblack = 0
 freeblackcount = 0
@@ -436,11 +437,22 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		time.sleep(0.5)
 		print('action2')
 		action = readtemplate(img)
-		print( action )
+		print "next action = " , action 
 		if action == 2:
 			sendInt(1,car_address)
 			time.sleep(0.3)
 			sendInt(0,car_address)
+		elif action == 0 :
+			p.ChangeDutyCycle(2.7)
+			if rdir == 1:
+				print "turn1"
+				sendInt(2,car_address)
+			elif rdir == 2:
+				print "turn2"
+				sendInt(3,car_address)
+			time.sleep(2)
+			limitdetectpurple = 1
+			limitdetectpurpleframeval = 20
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
@@ -451,22 +463,24 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		time.sleep(4)
 		p.ChangeDutyCycle(2.7)
 		if rdir == 1:
-			sendInt(5,car_address)
+			sendInt(8,car_address)
 		elif rdir == 2:
-			sendInt(6,car_address)
-		time.sleep(1.5)
+			sendInt(7,car_address)
+		time.sleep(1)
 		limitdetectpurple = 1
+		limitdetectpurpleframeval = 10
 		action = 0
 	elif ( action == 7 ):
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
 
+	if limitdetectpurple == 1 :
+		limitdetectpurpleframe += 1
 
-	limitdetectpurpleframe += 1
-
-	if limitdetectpurpleframe >= 20:
+	if limitdetectpurpleframe >= limitdetectpurpleframeval:
 		limitdetectpurple = 0
 		limitdetectpurpleframe = 0
+
 	if showimg == 1 :
 		cv2.imshow("color", img)
 		
