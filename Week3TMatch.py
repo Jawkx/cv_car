@@ -46,7 +46,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
    gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
    dilate = cv2.Canny(gray,200,200)
 
-   _,contours,_ = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+   contours,_ = cv2.findContours(dilate,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
    for cnt in contours:
       area = cv2.contourArea(cnt)
@@ -61,7 +61,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
                  pts2 = np.float32([[0,0],[320,0],[0,240],[320,240]])
                  matrix = cv2.getPerspectiveTransform(pts1,pts2)
                  result = cv2.warpPerspective(dilate,matrix,(320,240))
-                 cv2.imshow("daw",result)
+                 #cv2.imshow("daw",result)
                  resShortcut = cv2.matchTemplate(result,templateShortcut,cv2.TM_CCOEFF_NORMED)
                  locShortcut = np.where(resShortcut >= threshold)
                  resShortcutg = cv2.matchTemplate(result,templateShortcutg,cv2.TM_CCOEFF_NORMED)
