@@ -251,15 +251,23 @@ def get_x_rotation(x,y,z):
     return math.degrees(radians)
 
 def get_angle():
-    acceleration_xout = read_word_2c(0x3b)
-    acceleration_yout = read_word_2c(0x3d)
-    acceleration_zout = read_word_2c(0x3f)
- 
-    acceleration_xout_scaled = acceleration_xout / 16384.0
-    acceleration_yout_scaled = acceleration_yout / 16384.0
-    acceleration_zout_scaled = acceleration_zout / 16384.0
+    anglesum = 0
+    for i in range (0,2):
+	acceleration_xout = read_word_2c(0x3b)
+	acceleration_yout = read_word_2c(0x3d)
+	acceleration_zout = read_word_2c(0x3f)
+	acceleration_xout_scaled = acceleration_xout / 16384.0
+	acceleration_yout_scaled = acceleration_yout / 16384.0
+	acceleration_zout_scaled = acceleration_zout / 16384.0
 
-    return round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
+    	anglesum = anglesum + round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)) 
+	time.sleep(0.1)
+    
+    rawangle = anglesum/2
+    if rawangle >= 0 :
+	return rawangle
+    elif rawangle < 0:
+	return -rawangle
 
 def countshape():
 	print("countshape")
@@ -330,15 +338,21 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 
 
 	if ( action == 0 or action == 3 ): #linefollowing ang also readangle
-		p.ChangeDutyCycle(2.7)
 		if ( action == 3 ):
 			current_angle = get_angle()
+    			print 'current_angle' , current_angle    
+			print 'highest_angle' , highest_angle
 			if current_angle > highest_angle :
 				highest_angle = current_angle
-
-			if ( highest_angle - current_angle ) > 15
+			if ( highest_angle - current_angle ) > 20:
+			
+				sendInt(0,car_address)
+				time.sleep(2.0)
+				print '-------------------------'
 				print highest_angle
-					
+				print '------------------------'
+				action = 0
+	
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(img, (9, 9), 0)
 		hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
@@ -460,6 +474,11 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt(6,car_address)
 			time.sleep(0.7)
 			sendInt(0,car_address)
+		elif action == 3:
+			limitdetectpurple = 1
+			limitdetectpurpleframeval = 20
+			p.ChangeDutyCycle(2.7)
+			time.sleep(1.5)
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
@@ -482,7 +501,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
 		trafficlightcolor = watchtraffic(img)
-		if trafficlightcolor = 'green' :
+		if trafficlightcolor == 'green' :
 			sendInt( 5 , car_address )
 			action = 0
 			limitdetectpurple = 1
@@ -494,7 +513,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	if limitdetectpurpleframe >= limitdetectpurpleframeval:
 		limitdetectpurple = 0
 		limitdetectpurpleframe = 0
-
+	
 	if showimg == 1 :
 		cv2.imshow("color", img)
 		

@@ -42,26 +42,20 @@ bus.write_byte_data(address, power_mgmt_1, 0)
 highest_angle = 0
 try:
     while True :
-     
-        acceleration_xout = read_word_2c(0x3b)
-        acceleration_yout = read_word_2c(0x3d)
-        acceleration_zout = read_word_2c(0x3f)
-     
-        acceleration_xout_scaled = acceleration_xout / 16384.0
-        acceleration_yout_scaled = acceleration_yout / 16384.0
-        acceleration_zout_scaled = acceleration_zout / 16384.0
-     
-	current_angle =  round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
-	
-	if current_angle > highest_angle :
-		highest_angle = current_angle
+	anglesum = 0
 
-    if ( highest_angle - current_angle ) > 20 :
-        print highest_angle
-    
-	#print "highest angle:" , highest_angle
+   	for i in range (0,2):  
+		acceleration_xout = read_word_2c(0x3b)
+		acceleration_yout = read_word_2c(0x3d)
+		acceleration_zout = read_word_2c(0x3f)
 
-    #print "---------------------"
+		acceleration_xout_scaled = acceleration_xout / 16384.0
+		acceleration_yout_scaled = acceleration_yout / 16384.0
+		acceleration_zout_scaled = acceleration_zout / 16384.0
+
+		anglesum = anglesum +  round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled))
+
+	print anglesum/2
 
         time.sleep(0.1)
 except KeyboarInterrupt:
