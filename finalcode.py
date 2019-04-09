@@ -446,11 +446,11 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			p.ChangeDutyCycle(2.7)
 			if rdir == 1:
 				print "turn1"
-				sendInt(2,car_address)
+				sendInt(8,car_address)
 			elif rdir == 2:
 				print "turn2"
-				sendInt(3,car_address)
-			time.sleep(2)
+				sendInt(7,car_address)
+			time.sleep(1)
 			limitdetectpurple = 1
 			limitdetectpurpleframeval = 20
 	elif ( action == 4 ):
