@@ -323,7 +323,7 @@ time.sleep(0.1)
 for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=True):
 
 	img = rawCapture.array
-
+	p.ChangeDutyCycle(2.7)
 
 	if ( action == 0 or action == 3 ): #linefollowing ang also readangle
 
@@ -418,9 +418,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		if rdir = 0 :
+		if rdir == 0 :
 			sendInt( 6 , car_address )
-		elif rdir = 1 :
+		elif rdir == 1 :
 			sendInt(5, car_address)
 		p.ChangeDutyCycle(5.7)
 		distance = calculatedistance()
