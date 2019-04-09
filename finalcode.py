@@ -85,7 +85,7 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name ]
-thresholdValue = [ 0.8 , 0.6 , 0.6 , 0.6 , 0.6 , 0.9 , 0.8 , 0.8 , 0.7]
+thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.7 , 0.7 , 0.8 , 0.8 , 0.85 , 0.85]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
@@ -204,9 +204,10 @@ def countSendShift(contours):
 
 def readtemplate(target):
 	matched = 0
-	img_gray = cv2.cvtColor( target , cv2.COLOR_BGR2GRAY)
+	blurred = cv2.GaussianBlur(target,(9,9),0)
+	img_gray = cv2.cvtColor( blurred , cv2.COLOR_BGR2GRAY)
 
-	for i in range ( 0 , 8 ) :
+	for i in range ( 0 , 9 ) :
 
 		for j in range ( 0, 3 ):
 			current_template = match_for_name[i][j]
@@ -358,10 +359,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			purplebox = cv.BoxPoints(purplerect)
 			purplebox = np.int0(purplebox)
 			purplemidpoint = midpointCalc(purplebox)
-
-			if purplemidpoint > 280 :
+			if purplemidpoint[4] > 280 :
 				rdir = 2
-			elif purplemidpoint < 280:
+			elif purplemidpoint[4] < 280:
 				rdir = 1
 		elif ( len( yellowcontours) != 0 ):
 
@@ -453,6 +453,10 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			time.sleep(1)
 			limitdetectpurple = 1
 			limitdetectpurpleframeval = 20
+		elif action == 7:
+			sendInt(6,car_address)
+			time.sleep(0.7)
+			sendInt(0,car_address)
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
@@ -471,9 +475,10 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		limitdetectpurpleframeval = 10
 		action = 0
 	elif ( action == 7 ):
+	
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
-
+		time.sleep(0.5) 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
 
