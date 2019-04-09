@@ -1,7 +1,8 @@
 # Computer vision car
 
 ## What integer that are written to arduino do :
-- 1 - stop
+- 0 - stop
+- 1 - straight
 - 2 - turnleft
 - 3 - turnright
 - 4 - reverse(base on last known turn)
