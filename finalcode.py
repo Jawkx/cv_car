@@ -323,10 +323,10 @@ time.sleep(0.1)
 for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=True):
 
 	img = rawCapture.array
-	p.ChangeDutyCycle(2.7)
+
 
 	if ( action == 0 or action == 3 ): #linefollowing ang also readangle
-
+		p.ChangeDutyCycle(2.7)
 		if ( action == 3 ):
 			current_angle = get_angle()
 			if current_angle > highest_angle :
@@ -422,11 +422,12 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt( 6 , car_address )
 		elif rdir == 1 :
 			sendInt(5, car_address)
-		p.ChangeDutyCycle(5.7)
+		p.ChangeDutyCycle(5.9)
 		distance = calculatedistance()
 		print(distance)
 		if distance < stop_distance:
 			action = 2
+			time.sleep(0.3)
 			sendInt(0,car_address)
 	elif (action == 2): #TemplateMatching
 		time.sleep(0.5)
@@ -446,7 +447,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif ( action == 6 ):
 		print "action 6 - read distance"
 	elif ( action == 7 ):
-		p.ChangeDutyCycle(5.7)
+		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
 
 	if showimg == 1 :
