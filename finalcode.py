@@ -349,6 +349,17 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 
 		if ( len(purple_contours) != 0 ):
 			action = 1	
+			sendInt(0,car_address)
+			cpurple = max(purple_contours, key = cv2.contourArea)
+			purplerect = cv2.minAreaRect(cpurple)	
+			purplebox = cv.BoxPoints(purplerect)
+			purplebox = np.int0(purplebox)
+			purplemidpoint = midpointCalc(purplebox)
+
+			if purplemidpoint > 280 :
+				rdir = 1
+			elif purplemidpoint < 280:
+				rdir = 0
 		elif ( len( yellowcontours) != 0 ):
 
 			if ( lastcolorblack == 1 ):
@@ -407,7 +418,10 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		sendInt(5, car_address)
+		if rdir = 0 :
+			sendInt( 6 , car_address )
+		elif rdir = 1 :
+			sendInt(5, car_address)
 		p.ChangeDutyCycle(5.7)
 		distance = calculatedistance()
 		print(distance)
@@ -422,8 +436,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		action = readtemplate(img)
 		print( action )
 		if action == 2:
-			sendInt(5,car_address)
-			time.sleep(0.2)
+			sendInt(1,car_address)
+			time.sleep(0.3)
 			sendInt(0,car_address)
 	elif ( action == 4 ):
 		countshape(img)
