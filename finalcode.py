@@ -1,4 +1,4 @@
-##IMPORT LIBRARY
+#IMPORT LIBRARY
 import picamera
 import picamera.array
 import time
@@ -84,8 +84,8 @@ goal_name = [ tgoalpost0 , tgoalpost1 , tgoalpost2 , 'goal' , 5 ]
 rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
-match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name ,tlf_name]
-thresholdValue = [ 0.8 , 0.6 , 0.6 , 0.6 , 0.6 , 0.9 , 0.8 , 0.9 , 0.6]
+match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name ]
+thresholdValue = [ 0.8 , 0.6 , 0.6 , 0.6 , 0.6 , 0.9 , 0.8 , 0.8 , 0.7]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
@@ -114,6 +114,8 @@ upper_purple = np.array([143,188,216])
 lastcolor = 0
 limitframe = 0
 limitdelay = 10
+limitdetectpurple = 0
+limitdetectpurpleframe = 0
 lastcolorblack = 1
 freeblack = 0
 freeblackcount = 0
@@ -347,7 +349,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 		purple_contours , _ = cv2.findContours(maskedpurple , cv2.RETR_TREE , cv2.CHAIN_APPROX_NONE )
 
-		if ( len(purple_contours) != 0 ):
+		if ( len(purple_contours) != 0 and limitdetectpurple == 0 ):
 			action = 1	
 			sendInt(0,car_address)
 			cpurple = max(purple_contours, key = cv2.contourArea)
@@ -357,9 +359,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			purplemidpoint = midpointCalc(purplebox)
 
 			if purplemidpoint > 280 :
-				rdir = 1
+				rdir = 2
 			elif purplemidpoint < 280:
-				rdir = 0
+				rdir = 1
 		elif ( len( yellowcontours) != 0 ):
 
 			if ( lastcolorblack == 1 ):
@@ -418,13 +420,12 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			freeblack = 0
 			freeblackcount = 0
 	elif (action == 1): #block finding
-		if rdir == 0 :
+		if rdir == 1 :
 			sendInt( 6 , car_address )
-		elif rdir == 1 :
+		elif rdir == 2 :
 			sendInt(5, car_address)
 		p.ChangeDutyCycle(5.9)
 		distance = calculatedistance()
-		print(distance)
 		if distance < stop_distance:
 			action = 2
 			time.sleep(0.3)
@@ -445,11 +446,27 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif ( action == 5 ):
 		print "action 5 - goal"
 	elif ( action == 6 ):
-		print "action 6 - read distance"
+		time.sleep(3)
+		print 'distance =' , distance
+		time.sleep(4)
+		p.ChangeDutyCycle(2.7)
+		if rdir == 1:
+			sendInt(5,car_address)
+		elif rdir == 2:
+			sendInt(6,car_address)
+		time.sleep(1.5)
+		limitdetectpurple = 1
+		action = 0
 	elif ( action == 7 ):
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
 
+
+	limitdetectpurpleframe += 1
+
+	if limitdetectpurpleframe >= 20:
+		limitdetectpurple = 0
+		limitdetectpurpleframe = 0
 	if showimg == 1 :
 		cv2.imshow("color", img)
 		
