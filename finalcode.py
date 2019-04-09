@@ -336,6 +336,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			if current_angle > highest_angle :
 				highest_angle = current_angle
 
+			if ( highest_angle - current_angle ) > 15
+				print highest_angle
+					
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blurred = cv2.GaussianBlur(img, (9, 9), 0)
 		hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
@@ -478,7 +481,13 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
-		time.sleep(0.5) 
+		trafficlightcolor = watchtraffic(img)
+		if trafficlightcolor = 'green' :
+			sendInt( 5 , car_address )
+			action = 0
+			limitdetectpurple = 1
+			limitdetectpurpleframe = 15
+
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
 

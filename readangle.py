@@ -56,10 +56,12 @@ try:
 	if current_angle > highest_angle :
 		highest_angle = current_angle
 
-        print "current angle:" , current_angle
-	print "highest angle:" , highest_angle
+    if ( highest_angle - current_angle ) > 20 :
+        print highest_angle
+    
+	#print "highest angle:" , highest_angle
 
-        print "---------------------"
+    #print "---------------------"
 
         time.sleep(0.1)
 except KeyboarInterrupt:
