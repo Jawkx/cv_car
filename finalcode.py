@@ -106,8 +106,8 @@ upper_bgreen = np.array([90,255,255])
 lower_bred = np.array([166,100,150]) 
 upper_bred = np.array([175,255,255]) 
 
-lower_purple = np.array([109,102,55])
-upper_purple = np.array([143,188,216])
+lower_purple = np.array([135,60,50])
+upper_purple = np.array([150,130,216])
 
 
 ##VAR FOR LINE FOLLOWING
@@ -368,7 +368,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 		purple_contours , _ = cv2.findContours(maskedpurple , cv2.RETR_TREE , cv2.CHAIN_APPROX_NONE )
 
-		if ( len(purple_contours) != 0 and limitdetectpurple == 0 ):
+		if ( len(purple_contours) >= 8 and limitdetectpurple == 0 ):
 			action = 1	
 			sendInt(0,car_address)
 			cpurple = max(purple_contours, key = cv2.contourArea)
@@ -504,8 +504,10 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		if trafficlightcolor == 'green' :
 			sendInt( 5 , car_address )
 			action = 0
+			p.ChangeDutyCycle(2.7)
 			limitdetectpurple = 1
 			limitdetectpurpleframe = 15
+			time.sleep(1)
 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
