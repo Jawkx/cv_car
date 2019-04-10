@@ -469,8 +469,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 				sendInt(7,car_address)
 			time.sleep(1)
 			limitdetectpurple = 1
-			limitdetectpurpleframeval = 20
-		elif action == 7:
+			limitdetectpurpleframeval = 20#template matching
+		elif action == 7: 
 			sendInt(6,car_address)
 			time.sleep(0.7)
 			sendInt(0,car_address)
@@ -483,7 +483,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		countshape(img)
 	elif ( action == 5 ):
 		print "action 5 - goal"
-	elif ( action == 6 ):
+	elif ( action == 6 ): #readdistance
 		time.sleep(3)
 		print 'distance =' , distance
 		time.sleep(4)
@@ -496,7 +496,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		limitdetectpurple = 1
 		limitdetectpurpleframeval = 10
 		action = 0
-	elif ( action == 7 ):
+	elif ( action == 7 ): #trafficlight
 	
 		p.ChangeDutyCycle(5.9)
 		print( watchtraffic(img) )
