@@ -8,8 +8,8 @@ import smbus
 import math
 import RPi.GPIO as GPIO
 
-lower_purple = np.array([135,60,50])
-upper_purple = np.array([150,130,216])
+lower_purple = np.array([20,40,40])
+upper_purple = np.array([60,255,255])
 
 camera = picamera.PiCamera()
 camera.resolution = (560,256)

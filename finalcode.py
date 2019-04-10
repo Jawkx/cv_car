@@ -314,19 +314,19 @@ def watchtraffic(target):
 		return "green"
 
 def kickball(target):
+	
 	blurred = cv2.GaussianBlur(target, (9, 9), 0)
 	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
 
 	if len(yellowcontours) != 0 :
-		cball = max(contours, key = cv2.contourArea)
+		cball = max(yellowcontours, key = cv2.contourArea)
 		ballrect = cv2.minAreaRect(cball)	
 		ballbox = cv.BoxPoints(ballrect)
 		ballbox = np.int0(ballbox)
-		midpoint = midpointCalc(box)
-
-	print midpoint[4]
+		ballpoint = midpointCalc(ballbox)
+		print ballpoint
 
 '''
 ----------------------------------------------------------------
