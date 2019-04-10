@@ -85,7 +85,7 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name ]
-thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.7 , 0.7 , 0.8 , 0.8 , 0.85 , 0.85]
+thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.6 , 0.7 , 0.8 , 0.8 , 0.85 , 0.8]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
@@ -95,7 +95,7 @@ lower_black = np.array([0,0,0])
 upper_black = np.array([255,255,30])
 
 lower_yellow = np.array([20,100,100])
-upper_yellow = np.array([30,255,255])
+upper_yellow = np.array([45,255,255])
 
 lower_green = np.array([35,100,30])
 upper_green = np.array([75,255,255])
@@ -252,7 +252,7 @@ def get_x_rotation(x,y,z):
 
 def get_angle():
     anglesum = 0
-    for i in range (0,2):
+    for i in range (0,3):
 	acceleration_xout = read_word_2c(0x3b)
 	acceleration_yout = read_word_2c(0x3d)
 	acceleration_zout = read_word_2c(0x3f)
@@ -261,9 +261,9 @@ def get_angle():
 	acceleration_zout_scaled = acceleration_zout / 16384.0
 
     	anglesum = anglesum + round(get_x_rotation(acceleration_xout_scaled, acceleration_yout_scaled, acceleration_zout_scaled)) 
-	time.sleep(0.1)
+	time.sleep(0.05)
     
-    rawangle = anglesum/2
+    rawangle = anglesum/3
     if rawangle >= 0 :
 	return rawangle
     elif rawangle < 0:
@@ -314,20 +314,17 @@ def watchtraffic(target):
 		return "green"
 
 def kickball(target):
-	
-	blurred = cv2.GaussianBlur(target, (9, 9), 0)
-	hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+	hsv = cv2.cvtColor(target,cv2.COLOR_BGR2HSV)
 	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
-	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
-
+	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 	if len(yellowcontours) != 0 :
-		cball = max(yellowcontours, key = cv2.contourArea)
-		ballrect = cv2.minAreaRect(cball)	
-		ballbox = cv.BoxPoints(ballrect)
-		ballbox = np.int0(ballbox)
-		ballpoint = midpointCalc(ballbox)
-		print ballpoint
-
+		maxar = max( yellowcontours , key = cv2.contourArea )
+		maxcontour = yellowcontours[maxar]
+		M = cv2.moments(maxcontour)
+		print "ball present"
+		print int(M["m10"]/M["m00"])
+	else:
+		print "ball unpresent"
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -342,7 +339,7 @@ camera.framerate = 60
 rawCapture = picamera.array.PiRGBArray(camera)
 action = input('start at action:')
 sendstatus = input('Sendstatus 1-true 0-false:')
-stop_distance = input('stop distance (cm):')
+stop_distance = 55
 showimg = input('showimage:')
 
 time.sleep(0.1)
@@ -376,14 +373,13 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 		maskedgreen = cv2.inRange(hsv,lower_green,upper_green)
 		maskedpurple = cv2.inRange(hsv,lower_purple,upper_purple)
-
 		blackcontours, _ = cv2.findContours(maskedblack,cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 		redcontours, _ = cv2.findContours(maskedred,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
 		yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
 		greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 		purple_contours , _ = cv2.findContours(maskedpurple , cv2.RETR_TREE , cv2.CHAIN_APPROX_NONE )
 
-		if ( len(purple_contours) >= 8 and limitdetectpurple == 0 ):
+		if ( len(purple_contours) >= 4 and limitdetectpurple == 0 ):
 			action = 1	
 			sendInt(0,car_address)
 			cpurple = max(purple_contours, key = cv2.contourArea)
@@ -500,6 +496,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		p.ChangeDutyCycle(5.7)
 		kickball(img)
 	elif ( action == 6 ): #readdistance
+		print "reading distance..."
 		time.sleep(3)
 		print 'distance =' , distance
 		time.sleep(4)
@@ -508,16 +505,18 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt(8,car_address)
 		elif rdir == 2:
 			sendInt(7,car_address)
-		time.sleep(1)
+		time.sleep(2)
 		limitdetectpurple = 1
 		limitdetectpurpleframeval = 10
 		action = 0
 	elif ( action == 7 ): #trafficlight
 	
 		p.ChangeDutyCycle(5.9)
-		print( watchtraffic(img) )
+		#print( watchtraffic(img) )
 		trafficlightcolor = watchtraffic(img)
 		if trafficlightcolor == 'green' :
+			sendInt( 1 , car_address )
+			time.sleep(0.5)
 			sendInt( 5 , car_address )
 			action = 0
 			p.ChangeDutyCycle(2.7)

@@ -8,8 +8,8 @@ import smbus
 import math
 import RPi.GPIO as GPIO
 
-lower_purple = np.array([20,40,40])
-upper_purple = np.array([60,255,255])
+lower_purple = np.array([0,123,120])
+upper_purple = np.array([62,208,162])
 
 camera = picamera.PiCamera()
 camera.resolution = (560,256)
@@ -20,14 +20,14 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 
 	img = rawCapture.array
 	hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
-	maskedpurple = cv2.inRange(hsv,lower_purple,upper_purple)
+	maskedpurple = cv2.inRange(img,lower_purple,upper_purple)
 	contours , _ = cv2.findContours(maskedpurple,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
 	if len(contours) > 10 :
 		print('true')
 	else :
 		print ('false')
-	cv2.imshow( "purpleonly" , maskedpurple)
+	cv2.imshow( "purpleonly" , img)
 
 	rawCapture.truncate(0)
 	key = cv2.waitKey(1) & 0xFF
