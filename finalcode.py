@@ -304,12 +304,10 @@ def watchtraffic(target):
 	elif green_area > red_area:
 		return "green"
 
-def kickball(target):
+def findball(target):
 	hsv = cv2.cvtColor(target,cv2.COLOR_BGR2HSV)
 	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-	maskedgreen = cv2.inRange(hsv, lower_green , upper_green )
-	greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 	if len(yellowcontours) != 0 :
 		maxcontour = max( yellowcontours , key = cv2.contourArea )
 		M = cv2.moments(maxcontour)
@@ -325,22 +323,13 @@ def kickball(target):
 				time.sleep(0.2)
 				sendInt( 0 , car_address )
 				time.sleep(0.3)
-				sendInt( 9 , car_address )
+                                p.ChangeDutyCycle(7.0)
 				time.sleep ( 1 )
-				sendInt( 0 , car_address )
 				print "middle"
-				time.sleep(3)
+                                action = 9
 			else:
 				print "not middle"
-	#else:
-		#print "ball unpresent"
 
-	#if len(greencontours) != 0 :
-	#	greenc = max(greencontours, key = cv2.contourArea)
-	#	greenrect = cv2.minAreaRect(greenc)	
-	#	greenbox = cv.BoxPoints(greenrect)
-	#	greenbox = np.int0(greenbox)
-	#	cv2.drawContours(img,[greenbox],0,(0,0,255))
 	
 
 def findbackline(target):
@@ -359,6 +348,23 @@ def findbackline(target):
 	else:
 		return  0
 
+def checkgp(target):
+	maskedgreen = cv2.inRange(hsv, lower_green , upper_green )
+	greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+	if len(greencontours) != 0 :
+		greenc = max(greencontours, key = cv2.contourArea)
+		greenrect = cv2.minAreaRect(greenc)	
+        	greenbox = cv.BoxPoints(greenrect)
+		greenbox = np.int0(greenbox)
+                
+                if greenbox != None :
+                    if ( greenbox[0][0] >= 250 and greenbox[0][1] <= 310 ):
+                        print 'in goal'
+                    else :
+                        print 'not in goal'
+        else :
+            print 'not in goal'
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -534,7 +540,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif ( action == 5 ):
 		p.ChangeDutyCycle(6.1)
 		sendInt(5,car_address)
-		kickball(img)
+		findball(img)
 	elif ( action == 6 ): #readdistance
 		print "reading distance..."
 		time.sleep(3)
@@ -565,6 +571,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		
 		if findbackline(img) ==  1:
 			action = 0
+        elif ( action == 9 ):
+                checkgp()
 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
