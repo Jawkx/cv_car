@@ -85,7 +85,7 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name ]
-thresholdValue = [ 0.85 , 0.65 , 0.65 , 0.6 , 0.7 , 0.8 , 0.8 , 0.85 , 0.8]
+thresholdValue = [ 0.85 , 0.65 , 0.6 , 0.6 , 0.7 , 0.8 , 0.8 , 0.85 , 0.85]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
@@ -271,7 +271,8 @@ def get_angle():
 
 def countshape():
 	print("countshape")
- 
+	p.ChangeDutyCycle(3.2) 
+	time.sleep(1)
 
 def watchtraffic(target):
 	img = target
@@ -323,13 +324,15 @@ def findball(target):
 				time.sleep(0.2)
 				sendInt( 0 , car_address )
 				time.sleep(0.3)
-                                p.ChangeDutyCycle(7.0)
+                                p.ChangeDutyCycle(6.5)
 				time.sleep ( 1 )
 				print "middle"
-                                action = 9
+                                return  9
 			else:
 				print "not middle"
-
+				return 5
+	else :
+		return 5
 	
 
 def findbackline(target):
@@ -349,6 +352,7 @@ def findbackline(target):
 		return  0
 
 def checkgp(target):
+	hsv = cv2.cvtColor(target, cv2.COLOR_BGR2HSV)
 	maskedgreen = cv2.inRange(hsv, lower_green , upper_green )
 	greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 
@@ -357,14 +361,19 @@ def checkgp(target):
 		greenrect = cv2.minAreaRect(greenc)	
         	greenbox = cv.BoxPoints(greenrect)
 		greenbox = np.int0(greenbox)
-                
+                cv2.drawContours(img,[greenbox],0,(0,0,255),2)
                 if greenbox != None :
-                    if ( greenbox[0][0] >= 250 and greenbox[0][1] <= 310 ):
+                    if ( greenbox[0][0] >= 250 and greenbox[1][0] <= 310 ):
                         print 'in goal'
+			sendInt( 9 , car_address )
+			time.sleep(1)
+			sendInt( 0 , car_address )
+			time.sleep(2)
                     else :
                         print 'not in goal'
         else :
-            print 'not in goal'
+            print 'no find green '
+
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -501,7 +510,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt( 6 , car_address )
 		elif rdir == 2 :
 			sendInt(5, car_address)
-		p.ChangeDutyCycle(5.9)
+		p.ChangeDutyCycle(6.5)
 		distance = calculatedistance()
 		if distance < stop_distance:
 			action = 2
@@ -523,9 +532,10 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		elif action == 0 :
 			p.ChangeDutyCycle(3.2)
 			time.sleep(1)
-			findbackline(img)
+			action = 8
 			limitdetectpurple = 1
-			limitdetectpurpleframeval = 20#template matching
+			limitdetectpurpleframeval = 30#template matching
+			noblack = 0
 		elif action == 7: 
 			sendInt(6,car_address)
 			time.sleep(0.7)
@@ -536,11 +546,15 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			p.ChangeDutyCycle(3.2)
 			time.sleep(1.5)
 	elif ( action == 4 ):
-		countshape(img)
+		countshape()
+		limitdetectpurple = 1
+		limitdetectpurpleframeval = 25
+		time.sleep(1)
+		action = 8
 	elif ( action == 5 ):
-		p.ChangeDutyCycle(6.1)
+		p.ChangeDutyCycle(6.0)
 		sendInt(5,car_address)
-		findball(img)
+		action = findball(img)
 	elif ( action == 6 ): #readdistance
 		print "reading distance..."
 		time.sleep(3)
@@ -572,7 +586,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		if findbackline(img) ==  1:
 			action = 0
         elif ( action == 9 ):
-                checkgp()
+		print "check gp"
+                checkgp(img)
 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
