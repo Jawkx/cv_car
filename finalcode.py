@@ -321,6 +321,12 @@ def kickball(target):
 			ballshift = ballpoint - 280;
 				
 			if( ballshift <= 30 and ballshift >= -30 ):
+				sendInt( 6 , car_address )
+				time.sleep(0.2)
+				sendInt( 0 , car_address )
+				time.sleep(0.3)
+				sendInt( 9 , car_address )
+				time.sleep ( 1 )
 				sendInt( 0 , car_address )
 				print "middle"
 				time.sleep(3)
@@ -526,7 +532,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
-		p.ChangeDutyCycle(5.9)
+		p.ChangeDutyCycle(6.1)
 		sendInt(5,car_address)
 		kickball(img)
 	elif ( action == 6 ): #readdistance
