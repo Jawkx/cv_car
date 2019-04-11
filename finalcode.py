@@ -309,8 +309,8 @@ def kickball(target):
 	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 	if len(yellowcontours) != 0 :
-		maxar = max( yellowcontours , key = cv2.contourArea )
-		maxcontour = yellowcontours[maxar]
+		maxcontour = max( yellowcontours , key = cv2.contourArea )
+		#maxcontour = yellowcontours[maxar]
 		M = cv2.moments(maxcontour)
 		print "ball present"
 		print int(M["m10"]/M["m00"])
