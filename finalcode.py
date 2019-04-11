@@ -308,14 +308,34 @@ def kickball(target):
 	hsv = cv2.cvtColor(target,cv2.COLOR_BGR2HSV)
 	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
 	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+	maskedgreen = cv2.inRange(hsv, lower_green , upper_green )
+	greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 	if len(yellowcontours) != 0 :
 		maxcontour = max( yellowcontours , key = cv2.contourArea )
-		#maxcontour = yellowcontours[maxar]
 		M = cv2.moments(maxcontour)
-		print "ball present"
-		print int(M["m10"]/M["m00"])
-	else:
-		print "ball unpresent"
+		#print "ball present"
+		if  M["m00"] != 0:
+			ballpoint =  int(M["m10"]/M["m00"])
+			#print ballpoint
+		
+			ballshift = ballpoint - 280;
+				
+			if( ballshift <= 30 and ballshift >= -30 ):
+				sendInt( 0 , car_address )
+				print "middle"
+				time.sleep(3)
+			else:
+				print "not middle"
+	#else:
+		#print "ball unpresent"
+
+	#if len(greencontours) != 0 :
+	#	greenc = max(greencontours, key = cv2.contourArea)
+	#	greenrect = cv2.minAreaRect(greenc)	
+	#	greenbox = cv.BoxPoints(greenrect)
+	#	greenbox = np.int0(greenbox)
+	#	cv2.drawContours(img,[greenbox],0,(0,0,255))
+	
 
 def findbackline(target):
 	hsv = cv2.cvtColor(target, cv2.COLOR_BGR2HSV)
@@ -506,7 +526,8 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 	elif ( action == 4 ):
 		countshape(img)
 	elif ( action == 5 ):
-		p.ChangeDutyCycle(5.7)
+		p.ChangeDutyCycle(5.9)
+		sendInt(5,car_address)
 		kickball(img)
 	elif ( action == 6 ): #readdistance
 		print "reading distance..."
