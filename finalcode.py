@@ -369,10 +369,16 @@ def checkgp(target):
 			time.sleep(1)
 			sendInt( 0 , car_address )
 			time.sleep(2)
+			sendInt( 4 , car_address )
+			p.ChangeDutyCycle(3.2)
+			time.sleep(4)
+			return 8
                     else :
                         print 'not in goal'
+			return 9
         else :
             print 'no find green '
+	    return 9
 
 '''
 ----------------------------------------------------------------
@@ -542,7 +548,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			sendInt(0,car_address)
 		elif action == 3:
 			limitdetectpurple = 1
-			limitdetectpurpleframeval = 20
+			limitdetectpurpleframeval = 30
 			p.ChangeDutyCycle(3.2)
 			time.sleep(1.5)
 	elif ( action == 4 ):
@@ -587,7 +593,9 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 			action = 0
         elif ( action == 9 ):
 		print "check gp"
-                checkgp(img)
+                action = checkgp(img)
+		limitdetectpurple = 1
+		limitdetectpurpleval = 60
 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
