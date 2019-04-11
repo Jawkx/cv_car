@@ -19,7 +19,7 @@ GPIO.setup(servoPin, GPIO.OUT)
 GPIO.setup(trigger,GPIO.OUT)
 GPIO.setup(echo,GPIO.IN)
 p = GPIO.PWM(servoPin, 50) # GPIO 17 for PWM with 50Hz
-p.start(2.7) # Initialization
+p.start(3.2) # Initialization
 
 ##SETTING FOR I2C
 bus = smbus.SMBus(1)
@@ -85,14 +85,14 @@ rdd_name = [ trdd0 , trdd1 , trdd2 , 'read distance' , 6 ]
 tlf_name = [ ttfl0 , ttfl1 , ttfl2 , 'traffic light' , 7 ]
 
 match_for_name = [ angle_name , colorblue_name , colorgreen_name , colorred_name , coloryellow_name , cshape_name , goal_name , rdd_name , tlf_name ]
-thresholdValue = [ 0.8 , 0.7 , 0.7 , 0.6 , 0.7 , 0.8 , 0.8 , 0.85 , 0.8]
+thresholdValue = [ 0.85 , 0.65 , 0.65 , 0.6 , 0.7 , 0.8 , 0.8 , 0.85 , 0.8]
 
 ##VAR FOR COLOR
 lower_red = np.array([166,84,100]) 
 upper_red = np.array([175,255,255]) 
 
 lower_black = np.array([0,0,0])
-upper_black = np.array([255,255,30])
+upper_black = np.array([255,255,40])
 
 lower_yellow = np.array([20,100,100])
 upper_yellow = np.array([45,255,255])
@@ -106,8 +106,8 @@ upper_bgreen = np.array([90,255,255])
 lower_bred = np.array([166,100,150]) 
 upper_bred = np.array([175,255,255]) 
 
-lower_purple = np.array([135,60,50])
-upper_purple = np.array([150,130,216])
+lower_purple = np.array([120,60,70])
+upper_purple = np.array([155,130,216])
 
 
 ##VAR FOR LINE FOLLOWING
@@ -214,7 +214,7 @@ def readtemplate(target):
 			res = cv2.matchTemplate(img_gray, current_template,cv2.TM_CCOEFF_NORMED)
 			loc = np.where( res >= thresholdValue[i])
 
-			if len( zip(*loc[::-1]) ) >= 3 :
+			if len( zip(*loc[::-1]) ) >= 2 :
 				matched = 1
 		
 		if ( matched != 0 ):
@@ -272,15 +272,6 @@ def get_angle():
 def countshape():
 	print("countshape")
  
-def crop(target):
-	gray = cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
-	blurred = cv2.GaussianBlur( gray , (9,9) , 0 )
-	ret,thresh = cv2.threshold(blurred,40,255,cv2.THRESH_BINARY_INV)
-	contours, _ = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
-	c = max(contours, key = cv2.contourArea )
-	x,y,w,h = cv2.boundingRect(c)
-
-	return target[ y:y+h , x:x+w ]
 
 def watchtraffic(target):
 	img = target
@@ -325,6 +316,23 @@ def kickball(target):
 		print int(M["m10"]/M["m00"])
 	else:
 		print "ball unpresent"
+
+def findbackline(target):
+	hsv = cv2.cvtColor(target, cv2.COLOR_BGR2HSV)
+	maskedred = cv2.inRange(hsv, lower_red, upper_red)
+	maskedblack = cv2.inRange(hsv, lower_black , upper_black )
+	maskedyellow = cv2.inRange(hsv, lower_yellow , upper_yellow )
+	maskedgreen = cv2.inRange(hsv,lower_green,upper_green)
+	blackcontours, _ = cv2.findContours(maskedblack,cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+	redcontours, _ = cv2.findContours(maskedred,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
+	yellowcontours, _ = cv2.findContours(maskedyellow,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)	
+	greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
+
+	if blackcontours!=0 or redcontours!=0 or yellowcontours!=0 or greencontours!=0 :
+		return  1
+	else:
+		return  0
+
 '''
 ----------------------------------------------------------------
 ================================================================
@@ -379,25 +387,32 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		greencontours, _ = cv2.findContours(maskedgreen,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
 		purple_contours , _ = cv2.findContours(maskedpurple , cv2.RETR_TREE , cv2.CHAIN_APPROX_NONE )
 
-		if ( len(purple_contours) >= 4 and limitdetectpurple == 0 ):
-			action = 1	
+		
+		if ( len(purple_contours) != 0 and limitdetectpurple == 0 ):
+
+			sendInt(4,car_address)
+			time.sleep(0.1)
 			sendInt(0,car_address)
 			cpurple = max(purple_contours, key = cv2.contourArea)
 			purplerect = cv2.minAreaRect(cpurple)	
 			purplebox = cv.BoxPoints(purplerect)
 			purplebox = np.int0(purplebox)
 			purplemidpoint = midpointCalc(purplebox)
-			if purplemidpoint[4] > 280 :
-				rdir = 2
-			elif purplemidpoint[4] < 280:
-				rdir = 1
+			print 'detected'
+			if purplemidpoint != None:
+				print 'calculated'
+				action = 1
+				if purplemidpoint[4] > 280 :
+					rdir = 2
+				elif purplemidpoint[4] < 280:
+					rdir = 1
+
 		elif ( len( yellowcontours) != 0 ):
 
 			if ( lastcolorblack == 1 ):
 				noblack = 1
 				lastcolorblack = 0
 				limitdelay = 10
-			
 			
 			if noblack == 1 :
 				limitframe += 1
@@ -435,6 +450,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 				lastcolorblack = 1
 			
 			sendInt( countSendShift(blackcontours) , car_address )	
+
 		else :
 				sendInt(4 , car_address)
 
@@ -468,17 +484,14 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		print "next action = " , action 
 		if action == 2:
 			sendInt(1,car_address)
-			time.sleep(0.3)
+			time.sleep(0.2)
+			sendInt(4,car_address)
+			time.sleep(1)
 			sendInt(0,car_address)
 		elif action == 0 :
-			p.ChangeDutyCycle(2.7)
-			if rdir == 1:
-				print "turn1"
-				sendInt(8,car_address)
-			elif rdir == 2:
-				print "turn2"
-				sendInt(7,car_address)
+			p.ChangeDutyCycle(3.2)
 			time.sleep(1)
+			findbackline(img)
 			limitdetectpurple = 1
 			limitdetectpurpleframeval = 20#template matching
 		elif action == 7: 
@@ -488,7 +501,7 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		elif action == 3:
 			limitdetectpurple = 1
 			limitdetectpurpleframeval = 20
-			p.ChangeDutyCycle(2.7)
+			p.ChangeDutyCycle(3.2)
 			time.sleep(1.5)
 	elif ( action == 4 ):
 		countshape(img)
@@ -500,29 +513,31 @@ for frame in camera.capture_continuous(rawCapture,format='bgr',use_video_port=Tr
 		time.sleep(3)
 		print 'distance =' , distance
 		time.sleep(4)
-		p.ChangeDutyCycle(2.7)
-		if rdir == 1:
-			sendInt(8,car_address)
-		elif rdir == 2:
-			sendInt(7,car_address)
-		time.sleep(2)
+		p.ChangeDutyCycle(3.2)
+		action = 8
+		time.sleep(1.5)
 		limitdetectpurple = 1
 		limitdetectpurpleframeval = 10
-		action = 0
 	elif ( action == 7 ): #trafficlight
 	
 		p.ChangeDutyCycle(5.9)
 		#print( watchtraffic(img) )
 		trafficlightcolor = watchtraffic(img)
 		if trafficlightcolor == 'green' :
-			sendInt( 1 , car_address )
-			time.sleep(0.5)
 			sendInt( 5 , car_address )
-			action = 0
-			p.ChangeDutyCycle(2.7)
+			action = 8
+			p.ChangeDutyCycle(3.2)
 			limitdetectpurple = 1
 			limitdetectpurpleframe = 15
 			time.sleep(1)
+	elif ( action == 8 ):
+		if rdir == 1:
+			sendInt(8,car_address)
+		elif rdir == 2:
+			sendInt(7,car_address)
+		
+		if findbackline(img) ==  1:
+			action = 0
 
 	if limitdetectpurple == 1 :
 		limitdetectpurpleframe += 1
